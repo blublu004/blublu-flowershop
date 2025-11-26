@@ -1,5 +1,5 @@
 body{
-    background-image: url("img/bg2.jpg");
+    background-image: url("bg2.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -145,4 +145,5 @@ h3 {
 .view-btn:hover {
     background-color: #ffd1e0;  /* slightly darker pink */
 }
+
 
