@@ -9,6 +9,15 @@ body{
     font-family: Arial, sans-serif;
 }
 
+.header {
+  display: flex;
+  flex-wrap: wrap; /* items move to next line on small screens */
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+
 .header-container {
     display: flex;
     justify-content: space-between;
@@ -16,6 +25,13 @@ body{
     padding: 10px 40px; /* pinapaliit para lumapit ang title at search bar */
     margin-top: 10px;
 }
+
+.container {
+  width: 90%; /* instead of 800px */
+  max-width: 1200px; /* optional max width for desktop */
+  margin: 0 auto; /* center the container */
+}
+
 
 .title {
     font-size: 70px;  /* mas malaki */
@@ -59,12 +75,18 @@ body{
 }
 
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
 
 h1{
     text-align: center;
     color: #ffe6f2;
     text-shadow: 2px 2px 4px #cd327d; /* better than stroke */
-    font-size: 50px;
+    font-size: 2.5rem;
     margin-bottom: 5px;
     stroke: #db3183;
     font-style: oblique;
