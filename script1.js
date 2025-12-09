@@ -1,0 +1,80 @@
+// Initialize cart
+let cart = [];
+let total = 0;
+
+// Get all Add to Cart buttons
+const buttons = document.querySelectorAll('.view-btn');
+
+buttons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        const box = e.target.parentElement;
+        const productName = box.querySelector('h3').innerText;
+        const priceText = box.querySelector('.price').innerText;
+        const productPrice = parseFloat(priceText.replace('₱', ''));
+
+        addToCart(productName, productPrice);
+    });
+});
+
+function addToCart(name, price) {
+    cart.push({ name, price });
+    total += price;
+    displayCart();
+}
+
+function displayCart() {
+    // Check if cart container exists, otherwise create
+    let cartContainer = document.getElementById('cart-container');
+    if (!cartContainer) {
+        cartContainer = document.createElement('div');
+        cartContainer.id = 'cart-container';
+        cartContainer.style.position = 'fixed';
+        cartContainer.style.top = '10px';
+        cartContainer.style.right = '10px';
+        cartContainer.style.width = '250px';
+        cartContainer.style.backgroundColor = 'white';
+        cartContainer.style.border = '1px solid #ccc';
+        cartContainer.style.padding = '10px';
+        cartContainer.style.borderRadius = '10px';
+        cartContainer.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+        document.body.appendChild(cartContainer);
+    }
+
+    // Add cart title
+    cartContainer.innerHTML = `<h3>Cart</h3>`;
+    
+    // List items
+    const ul = document.createElement('ul');
+    ul.style.listStyle = 'none';
+    ul.style.padding = '0';
+
+    cart.forEach(item => {
+        const li = document.createElement('li');
+        li.style.marginBottom = '5px';
+        li.textContent = `${item.name} - ₱${item.price}`;
+        ul.appendChild(li);
+    });
+
+    cartContainer.appendChild(ul);
+
+    // Show total
+    const totalDiv = document.createElement('p');
+    totalDiv.style.fontWeight = 'bold';
+    totalDiv.textContent = `Total: ₱${total}`;
+    cartContainer.appendChild(totalDiv);
+    
+}
+const totalPrice = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+const totalDiv = document.createElement('p');
+totalDiv.style.fontWeight = 'bold';
+totalDiv.style.textAlign = 'right';
+totalDiv.textContent = `Total: ₱${totalPrice.toFixed(2)}`;
+cartContainer.appendChild(totalDiv);
+localStorage.setItem('total', totalPrice.toFixed(2));
+function removeItem(index) {
+    if(confirm('Are you sure you want to remove this item?')) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart();
+    }
+}

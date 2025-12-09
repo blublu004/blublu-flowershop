@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLUBLU Flower Shop</title>
+    <title>Lilac - BLUBLU Flower Shop</title>
     <link rel="stylesheet" href="LandingPage.css">
 </head>
 <body>
@@ -12,51 +12,52 @@
 <div class="header-container">
     <h1 class="title">BLUBLU FLOWER SHOP</h1>
 
-    <div class="search-bar">
-        <input type="text" placeholder="Search flowers...">
-        <button>Search</button>
-    </div>
+
+
+    <a href="cart.html">
+        <img src="addtocart.png" class="cart-img" alt="Cart">
+    </a>
 </div>
 
 <!-- PAGE TITLE -->
-<h2 class="page-title">Lilac Colection</h2>
+<h2 class="page-title">Lilac Collection</h2>
 
 <!-- PRODUCT GRID -->
 <div class="container-grid">
 
     <div class="box">
-        <img src="ll1.jpg" alt="Lilac 1">
-        <h3>Product 1</h3>
+        <img src="img/lilac/ll1.jpg" alt="Lilac 1">
+        <h3>Lilac 1</h3>
         <div class="price">₱150</div>
-        <button class="view-btn">Add to Cart</button>
+        <button class="add-btn" data-name="Lilac 1" data-price="150" data-img="img/lilac/ll1.jpg">Add to Cart</button>
     </div>
 
     <div class="box">
-        <img src="ll2.jpg" alt="Lilac 2">
-        <h3>Product 2</h3>
+        <img src="img/lilac/ll2.jpg" alt="Lilac 2">
+        <h3>Lilac 2</h3>
         <div class="price">₱200</div>
-        <button class="view-btn">Add to Cart</button>
+        <button class="add-btn" data-name="Lilac 2" data-price="200" data-img="img/lilac/ll2.jpg">Add to Cart</button>
     </div>
 
     <div class="box">
-        <img src="ll3.jpg" alt="Lilac 3">
-        <h3>Product 3</h3>
+        <img src="img/lilac/ll3.jpg" alt="Lilac 3">
+        <h3>Lilac 3</h3>
         <div class="price">₱180</div>
-        <button class="view-btn">Add to Cart</button>
+        <button class="add-btn" data-name="Lilac 3" data-price="180" data-img="img/lilac/ll3.jpg">Add to Cart</button>
     </div>
 
     <div class="box">
-        <img src="ll4.jpg" alt="Lilac 4">
-        <h3>Product 4</h3>
+        <img src="img/lilac/ll4.jpg" alt="Lilac 4">
+        <h3>Lilac 4</h3>
         <div class="price">₱250</div>
-        <button class="view-btn">Add to Cart</button>
+        <button class="add-btn" data-name="Lilac 4" data-price="250" data-img="img/lilac/ll4.jpg">Add to Cart</button>
     </div>
 
     <div class="box">
-        <img src="ll5.jpg" alt="Lilac 5">
-        <h3>Product 5</h3>
+        <img src="img/lilac/ll5.jpg" alt="Lilac 5">
+        <h3>Lilac 5</h3>
         <div class="price">₱300</div>
-        <button class="view-btn">Add to Cart</button>
+        <button class="add-btn" data-name="Lilac 5" data-price="300" data-img="img/lilac/ll5.jpg">Add to Cart</button>
     </div>
 
 </div>
@@ -66,7 +67,50 @@
     <a href="index.html" class="back-btn">← Back to Home</a>
 </div>
 
+<!-- ADDED TO CART POPUP -->
+<div id="added-message" class="added-message">✔ Added to Cart!</div>
+
+<!-- SCRIPT -->
+<script>
+const addButtons = document.querySelectorAll('.add-btn');
+const msg = document.getElementById('added-message');
+
+addButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Show popup
+        msg.classList.add('show');
+        setTimeout(() => msg.classList.remove('show'), 2000);
+
+        // Get product info
+        const product = {
+            name: btn.getAttribute('data-name'),
+            price: Number(btn.getAttribute('data-price')),
+            image: btn.getAttribute('data-img'),
+            quantity: 1
+        };
+
+        // Get cart from localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Check if item already exists
+        const existingItem = cart.find(item => item.name === product.name);
+        if (existingItem) {
+            existingItem.quantity += 1; // increase quantity if exists
+        } else {
+            cart.push(product); // add new item
+        }
+
+        // Save back to localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+    });
+});
+</script>
+<!-- CONTACT US -->
+<footer class="contact-section">
+    <h3>CONTACT US</h3>
+    <p>📍 Linapew, Tubao, La Union</p>
+    <p>📞 0992-877-1883</p>
+    <p>✉️ blubluflowershop@gmail.com</p>
+</footer>
 </body>
 </html>
-
-

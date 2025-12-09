@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Form - BLUBLU Flower Shop</title>
+<link rel="stylesheet" href="LandingPage.css">
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #f9f3f6, #ffe6f2);
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    text-align: center;
+    color: #ff6fcf;
+    margin-top: 30px;
+    font-size: 2rem;
+}
+.form-container {
+    max-width: 700px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+.cart-items {
+    margin-bottom: 25px;
+}
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #fff0f8;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.cart-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    border: 1px solid #ffd1ea;
+}
+.item-details {
+    flex: 1;
+}
+.item-name {
+    font-weight: 600;
+    color: #ff1493;
+}
+.item-price {
+    color: #ff6fcf;
+    font-weight: bold;
+}
+.item-quantity {
+    color: #ff6fcf;
+    font-weight: bold;
+    margin-top: 5px;
+}
+.total {
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 20px;
+    color: #ff1493;
+    font-size: 1.2rem;
+}
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    color: #ff6fcf;
+}
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-top: 5px;
+    font-size: 15px;
+}
+textarea { resize: none; height: 100px; }
+.submit-btn {
+    background-color: #ff6fcf;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: 0.2s;
+    width: 100%;
+    font-weight: bold;
+}
+.submit-btn:hover { background-color: #ff47b3; }
+.back-btn {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #ff1493;
+    color: #ff1493;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 15px;
+    transition: 0.3s;
+    margin-left: 520px;
+}
+.back-btn:hover { background: #ff47b3; color: white; }
+</style>
+</head>
+<body>
+
+<h1>Order Form</h1>
+
+<div class="form-container">
+
+    <!-- Cart items -->
+    <div class="cart-items" id="cartItems"></div>
+
+    <!-- Total -->
+    <p class="total" id="totalPrice"></p>
+
+    <!-- Order form -->
+    <form id="orderForm">
+        <label>Full Name</label>
+        <input type="text" id="fullname" required>
+
+        <label>Phone Number</label>
+        <input type="text" id="phone" required pattern="\d{11}" title="Phone number must be exactly 11 digits">
+
+        <label>Email Address</label>
+        <input type="email" id="email" required>
+
+        <label>Delivery Address</label>
+        <textarea id="address" required></textarea>
+
+        <label>Delivery Date</label>
+        <input type="date" id="date" required>
+
+        <label>Mode of Payment</label>
+        <select id="payment" required>
+            <option value="" disabled selected>Select payment</option>
+            <option value="COD">Cash on Delivery</option>
+            <option value="GCash">GCash</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+        </select>
+
+        <!-- Extra fields for GCash / Bank Transfer -->
+        <div id="paymentInfo" style="display:none; margin-top:10px;">
+            <label id="paymentLabel"></label>
+            <input type="text" id="paymentName" placeholder="Name" style="margin-bottom:5px;">
+            <input type="text" id="paymentNumber" placeholder="Number" pattern="\d{11}" title="Number must be exactly 11 digits">
+        </div>
+
+        <label>Card Message (optional)</label>
+        <textarea id="message" placeholder="Write a message for your card..."></textarea>
+
+        <button class="submit-btn" type="submit">Submit Order</button>
+    </form>
+</div>
+
+<a href="cart.html" class="back-btn">← Back to Cart</a>
+
+<script>
+const cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartItemsDiv = document.getElementById('cartItems');
+const totalPriceEl = document.getElementById('totalPrice');
+
+// Display cart items with quantities
+if(cart.length === 0){
+    cartItemsDiv.innerHTML = '<p style="text-align:center; color:#ff6fcf;">Your cart is empty.</p>';
+} else {
+    cart.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+            <img src="${item.image || 'placeholder.png'}" alt="${item.name}">
+            <div class="item-details">
+                <div class="item-name">${item.name}</div>
+                <div class="item-price">₱${item.price}</div>
+                <div class="item-quantity">Quantity: ${item.quantity}</div>
+            </div>
+        `;
+        cartItemsDiv.appendChild(div);
+    });
+
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    totalPriceEl.textContent = `Total: ₱${total}`;
+}
+
+// Dynamic payment fields
+const paymentSelect = document.getElementById("payment");
+const paymentInfoDiv = document.getElementById("paymentInfo");
+const paymentLabel = document.getElementById("paymentLabel");
+const paymentName = document.getElementById("paymentName");
+const paymentNumber = document.getElementById("paymentNumber");
+
+paymentSelect.addEventListener("change", function() {
+    const value = this.value;
+
+    if(value === "GCash"){
+        paymentInfoDiv.style.display = "block";
+        paymentLabel.textContent = "GCash Details";
+        paymentName.placeholder = "GCash Name";
+        paymentNumber.placeholder = "GCash Number";
+        paymentName.required = true;
+        paymentNumber.required = true;
+    } else if(value === "Bank Transfer"){
+        paymentInfoDiv.style.display = "block";
+        paymentLabel.textContent = "Bank Transfer Details";
+        paymentName.placeholder = "Bank Account Name";
+        paymentNumber.placeholder = "Bank Account Number";
+        paymentName.required = true;
+        paymentNumber.required = true;
+    } else {
+        paymentInfoDiv.style.display = "none";
+        paymentName.required = false;
+        paymentNumber.required = false;
+    }
+});
+
+// Handle order submission with 11-digit validation
+document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    if(cart.length === 0){
+        alert("Your cart is empty.");
+        return;
+    }
+
+    const payment = document.getElementById("payment").value;
+    if(!payment){
+        alert("Please select a mode of payment.");
+        return;
+    }
+
+    const phone = document.getElementById("phone").value;
+    if(!/^\d{11}$/.test(phone)){
+        alert("Phone number must be exactly 11 digits.");
+        return;
+    }
+
+    let extraInfo = "";
+    if(payment === "GCash" || payment === "Bank Transfer"){
+        const number = paymentNumber.value;
+        if(!/^\d{11}$/.test(number)){
+            alert("Payment number must be exactly 11 digits.");
+            return;
+        }
+        extraInfo = `\nName: ${paymentName.value}\nNumber: ${number}`;
+    }
+
+    const totalAmount = cart.reduce((sum,item)=>sum + item.price * item.quantity,0);
+
+    alert(`Your order has been submitted!\nPayment Method: ${payment}${extraInfo}\nTotal: ₱${totalAmount}\nThank you for choosing BLUBLU Flower Shop! 💐`);
+
+    // Clear cart
+    localStorage.setItem('cart', JSON.stringify([]));
+    this.reset();
+    cartItemsDiv.innerHTML = '';
+    totalPriceEl.textContent = '';
+    paymentInfoDiv.style.display = "none";
+});
+</script>
+
+</body>
+</html>

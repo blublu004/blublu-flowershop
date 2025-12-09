@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Cart - BLUBLU Flower Shop</title>
+<link rel="stylesheet" href="LandingPage.css">
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #f9f3f6, #ffe6f2);
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    text-align: center;
+    color: #ff6fcf;
+    margin-top: 30px;
+    font-size: 2rem;
+}
+.cart-container {
+    max-width: 700px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background: #fff0f8;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.cart-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    border: 1px solid #ffd1ea;
+}
+.item-details {
+    flex: 1;
+}
+.item-name {
+    font-weight: 600;
+    color: #ff1493;
+    margin-bottom: 5px;
+}
+.item-price {
+    color: #ff6fcf;
+    font-weight: bold;
+}
+.quantity-container {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+.quantity-label {
+    font-weight: 500;
+    color: #ff1493;
+    margin-right: 10px;
+}
+.quantity-input {
+    width: 60px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid #ffb6d6;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff1493;
+    transition: 0.2s;
+}
+.quantity-input:focus {
+    outline: none;
+    border-color: #ff47b3;
+    box-shadow: 0 0 5px rgba(255,71,179,0.5);
+}
+.remove-btn {
+    background: #ff6fcf;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.remove-btn:hover {
+    background: #ff47b3;
+}
+.total {
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+    color: #ff1493;
+    font-size: 1.2rem;
+}
+.order-btn {
+    background-color: #ff6fcf;
+    color: #fff;
+    font-size: small;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    display: inline-block;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.2s;
+    text-decoration: none;
+    margin-left: 284px;
+}
+.order-btn:hover {
+    background-color: #ff47b3;
+}
+.outside-btn {
+    padding: 10px 20px;
+    background: white;
+    border: 2px solid #ff1493;
+    color: #ff1493;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 15px;
+    transition: 0.3s;
+    margin-left: 520px;
+}
+.outside-btn:hover {
+    background: #ff47b3;
+    color: white;
+}
+.empty-cart {
+    text-align: center;
+    color: #ff6fcf;
+    margin-top: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>My Cart</h1>
+
+<div class="cart-container" id="cart-container"></div>
+
+<a href="index.html" class="outside-btn">← Continue Shopping</a>
+
+<script>
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+const cartContainer = document.getElementById('cart-container');
+
+function displayCart() {
+    cartContainer.innerHTML = '';
+
+    if(cart.length === 0){
+        cartContainer.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+        return;
+    }
+
+    cart.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+            <img src="${item.image || 'https://via.placeholder.com/60'}" alt="${item.name}">
+            <div class="item-details">
+                <div class="item-name">${item.name}</div>
+                <div class="item-price">₱${item.price}</div>
+                <div class="quantity-container">
+                    <span class="quantity-label">Qty:</span>
+                    <input type="number" min="1" class="quantity-input" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+                </div>
+            </div>
+            <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+        `;
+        cartContainer.appendChild(div);
+    });
+
+    const totalDiv = document.createElement('p');
+    totalDiv.className = 'total';
+    const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    totalDiv.textContent = `Total: ₱${totalPrice}`;
+    cartContainer.appendChild(totalDiv);
+
+    const orderBtn = document.createElement('a');
+    orderBtn.className = 'order-btn';
+    orderBtn.textContent = 'Place an Order';
+    orderBtn.href = 'order.html';
+    cartContainer.appendChild(orderBtn);
+}
+
+function removeItem(index){
+    cart.splice(index,1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    displayCart();
+}
+
+function updateQuantity(index, value){
+    const qty = parseInt(value);
+    if(qty > 0){
+        cart[index].quantity = qty;
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCart();
+    }
+}
+
+displayCart();
+</script>
+
+</body>
+</html>
