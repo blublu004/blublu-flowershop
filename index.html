@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BLUBLU Flower Shop</title>
     <link rel="stylesheet" href="LandingPage.css">
+    <style>
+        /* Optional tweak for back button container */
+        .back-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -133,7 +140,7 @@
                 <img src="ll5.jpg">
             </div>
         </div>
-        <h3>Lilac</h3>
+        <h3>Lilacs</h3>
         <button class="view-btn" data-url="Lilac.html">View</button>
     </div>
 
@@ -154,9 +161,9 @@
 </div> <!-- END GRID -->
 
 
-<!-- BACK BUTTON (hidden by default unless searching) -->
+<!-- BACK BUTTON (styled as View button) -->
 <div class="back-container">
-    <a href="index.html" id="backBtn" class="back-btn">← Back to Home</a>
+    <button id="backBtn" class="view-btn">← Back to Home</button>
 </div>
 
 <!-- CONTACTS FOOTER -->
@@ -172,11 +179,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // CAROUSEL
     const carousels = document.querySelectorAll('.carousel');
-
     carousels.forEach(carousel => {
         const images = carousel.querySelectorAll('img');
         let index = 0;
-
         setInterval(() => {
             images[index].classList.remove('active');
             index = (index + 1) % images.length;
@@ -186,10 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // VIEW BUTTON REDIRECT
     document.querySelectorAll('.view-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const url = button.getAttribute('data-url');
-            if (url) window.location.href = url;
-        });
+        if(button.dataset.url){
+            button.addEventListener('click', () => {
+                const url = button.getAttribute('data-url');
+                if (url) window.location.href = url;
+            });
+        }
     });
 
     // SEARCH + BACK BUTTON
@@ -198,14 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const boxes = document.querySelectorAll(".box");
     const backBtn = document.getElementById("backBtn");
 
-    // ensure back button hidden initially (works even if CSS fails)
     if (backBtn) backBtn.style.display = "none";
 
     function showAllBoxes() {
         boxes.forEach(box => box.style.display = "block");
     }
 
-    // SEARCH FUNCTION (on click and on Enter key)
     function doSearch() {
         const query = searchInput.value.trim().toLowerCase();
 
@@ -216,17 +221,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let found = false;
-boxes.forEach(box => {
-    const flowerName = box.querySelector("h3").textContent.trim().toLowerCase();
-    // Check only first letters
-    if (flowerName.startsWith(query)) {
-        box.style.display = "block";
-        found = true;
-    } else {
-        box.style.display = "none";
-    }
-});
-
+        boxes.forEach(box => {
+            const flowerName = box.querySelector("h3").textContent.trim().toLowerCase();
+            if (flowerName.startsWith(query)) { // first-letter match
+                box.style.display = "block";
+                found = true;
+            } else {
+                box.style.display = "none";
+            }
+        });
 
         if (backBtn) backBtn.style.display = "inline-block";
 
@@ -237,21 +240,17 @@ boxes.forEach(box => {
 
     searchBtn.addEventListener("click", doSearch);
 
-    // also allow Enter key in input to search
     searchInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
             doSearch();
         }
     });
 
-    // BACK BUTTON FUNCTION: reset search
     if (backBtn) {
-        backBtn.addEventListener("click", (e) => {
-            e.preventDefault(); // prevent immediate navigation to index (we're already on index)
+        backBtn.addEventListener("click", () => {
             searchInput.value = "";
             showAllBoxes();
             backBtn.style.display = "none";
-            // if you want real navigation to another page, remove preventDefault
         });
     }
 });
